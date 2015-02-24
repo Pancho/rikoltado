@@ -13,3 +13,4 @@ blockquote, q {quotes:"" "";}
 strong{font-weight:bold;}
 
 body {font-family:sans-serif;font-size:62.5%;}
+canvas {display:block;}

@@ -18,11 +18,22 @@ var Engine = (function () {
 		Draw single object
 		 */
 		draw: function (obj) {
+			console.log(obj.x, obj.y);
 			r.context.drawImage(obj.img, obj.x, obj.y);
 		}
 	}, u = {
-		persist: function (obj) {
-			r.persistent.push(obj);
+		/*
+		 Create a queue for the drawing of the frame. Elements will be painted in specified order.
+		 With this one can achieve the z-index, which would otherwise be elusive
+
+		 Use concat in case you have predefined list of objects (map, menus etc... those that don't need constant updating)
+		 */
+		dequeue: function (obj) {
+			var index = r.frameQueue.indexOf(obj);
+
+			if (index > -1) {
+				r.frameQueue.splice(r.frameQueue.indexOf(obj), 1);
+			}
 		},
 		/*
 		 Create a queue for the drawing of the frame. Elements will be painted in specified order.
@@ -48,8 +59,6 @@ var Engine = (function () {
 			$.each(r.frameQueue, function (i, obj) {
 				r.draw(obj);
 			});
-			// Clear queue for the next frame
-			r.frameQueue = r.persistent.slice();
 			// Once done with this frame, request next
 			r.animationFrame = window.requestAnimationFrame(u.animate);
 			//console.log('Frame: ', r.animationFrame);
