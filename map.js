@@ -1,7 +1,7 @@
 var Map = (function () {
 	var r = {
 		test: function () {
-			
+
 		}
 	}, u = {
 		initialize: function () {

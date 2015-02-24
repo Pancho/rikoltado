@@ -34,7 +34,7 @@ var DB = (function () {
 			store = db.createObjectStore(storeName, {autoIncrement: true});
 
 			$.each(indices, function (i, indexConfig) {
-				store.createIndex(indexConfig.name, indexConfig.name, { unique: !!indexConfig.unique});
+				store.createIndex(indexConfig.name, indexConfig.name, {unique: !!indexConfig.unique});
 			});
 
 			$.each(fixtures || [], function (i, blob) {
@@ -42,13 +42,15 @@ var DB = (function () {
 			});
 		},
 		recover: function (record, rules) {
-			$.each(rules, function (key, rule) {
-				if (typeof rule === 'object') {
-					record[key] = r.recover(record[key], rule);
-				} else if (rule === 'date') {
-					record[key] = new Date(record[key]);
-				}
-			});
+			if (rules && rules.length) {
+				$.each(rules, function (key, rule) {
+					if (typeof rule === 'object') {
+						record[key] = r.recover(record[key], rule);
+					} else if (rule === 'date') {
+						record[key] = new Date(record[key]);
+					}
+				});
+			}
 
 			return record;
 		}
@@ -167,6 +169,27 @@ var DB = (function () {
 						            cursor.continue();
 						        }
 						    };
+						},
+						update: function (obj, callback) {
+							var transaction = r.db.transaction(value, 'readwrite'),
+								store = transaction.objectStore(value),
+								keyRange = r.IDBKeyRange.only(obj.pk),
+								cursorRequest = store.openCursor(keyRange);
+
+							callback = callback || function () {};
+
+							transaction.oncomplete = function(event) {
+						        callback(event);
+						    };
+
+							cursorRequest.onsuccess = function (event) {
+								var cursor = event.target.result,
+									request = cursor.update(obj);
+
+								request.onsuccess = function (ev) {
+									callback(ev);
+								};
+							}
 						},
 						remove: function (pk, callback) {
 							var transaction = r.db.transaction(value, 'readwrite'),
