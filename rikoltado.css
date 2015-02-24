@@ -1,21 +1,2 @@
-<<<<<<< HEAD
-body {background-color:#171717;}
-
-#game {min-height:500px;}
-
-#buildings {margin:0 auto;position:relative;height:500px;width:1000px;}
-#buildings ul {position:absolute;bottom:0;border:2px solid #363636;background:#363636;}
-#buildings ul li {display:inline-block;margin:0 0 5px 2px;width:10px;height:5px;}
-
-#buildings ul li.window-0 {background-color:rgb(241, 241, 241);}
-#buildings ul li.window-1 {background-color:rgb(224, 224, 224);}
-#buildings ul li.window-2 {background-color:rgb(205, 205, 205);}
-#buildings ul li.window-3 {background-color:rgb(201, 201, 201);}
-#buildings ul li.window-4 {background-color:rgb(174, 174, 174);}
-#buildings ul li.window-5 {background-color:rgb(142, 142, 142);}
-#buildings ul li.window-6 {background-color:rgb(125, 125, 125);}
-#buildings ul li.window-7 {background-color:rgb(93, 93, 93);}
-#buildings ul li.window-8 {background-color:rgb(66, 66, 66);}
-#buildings ul li.window-9 {background-color:rgb(0, 0, 0);}
-=======
->>>>>>> ce9ef61da6c2fc9f8d78ced5950c1c8b4a385e29
+#map {}
+#map div {}
