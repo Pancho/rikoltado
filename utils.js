@@ -79,5 +79,11 @@ var Utils = {
 	getYearStart: function (date) {
 		date = new Date(date);
 		return new Date(date.setMonth(0));
+	},
+	randomFromRange: function (min, max) {
+		return Math.round(Math.random() * (max - min) + min);
+	},
+	randomSign: function () {
+		return Math.random() < 0.5 ? -1 : 1
 	}
 };

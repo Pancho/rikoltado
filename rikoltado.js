@@ -3,9 +3,6 @@ var Rikoltado = (function () {
 
 	}, u = {
 		initialize: function () {
-			Engine.initialize();
-			Engine.animate();
-			Controls.initialize();
 			DB.onReady(function () {
 
 			});
