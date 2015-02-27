@@ -1,2 +1,6 @@
-#map {}
-#map div {}
+body {background:#000 url(/city.png) left bottom repeat-x;}
+
+
+#map {background:transparent url(/map.png) left top no-repeat;width:250px;height:250px;position:relative;margin:50px;}
+#map div {position:absolute;width:68px;height:68px;border:1px solid #fff;cursor:pointer;}
+#map div:hover {border-color:#d2d2d2;background-color:rgba(0,0,0,.3);}

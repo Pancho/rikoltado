@@ -3,6 +3,7 @@ var Rikoltado = (function () {
 
 	}, u = {
 		initialize: function () {
+			Map.initialize();
 			DB.onReady(function () {
 
 			});
