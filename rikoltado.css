@@ -1,6 +1,14 @@
-body {background:#000 url(/city.png) left bottom repeat-x;}
+body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.png) left bottom repeat-x;}
 
+#navigation {margin:50px;width:250px;}
 
-#map {background:transparent url(/map.png) left top no-repeat;width:250px;height:250px;position:relative;margin:50px;}
-#map div {position:absolute;width:68px;height:68px;border:1px solid #fff;cursor:pointer;}
-#map div:hover {border-color:#d2d2d2;background-color:rgba(0,0,0,.3);}
+#navigation #map {background:transparent url(/map.png) left top no-repeat;width:250px;height:250px;position:relative;}
+#navigation #map div {position:absolute;width:68px;height:68px;border:1px solid #fff;cursor:pointer;}
+#navigation #map div:hover {border-color:#d2d2d2;background-color:rgba(0,0,0,.3);}
+
+#navigation h2 {position:absolute;background-color:#fff;color:#000;font-size:15px;line-height:1;padding:5px 10px;}
+#navigation .connector {position:absolute;height:1px;background-color:#fff;}
+
+#navigation #actions {}
+#navigation #actions li {}
+#navigation #actions li a {}

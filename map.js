@@ -1,13 +1,10 @@
 var Map = (function () {
 	var r = {
-		draw: function () {
-			console.log(111);
+		drawMap: function () {
 			DB.sectors.all(function (sectors) {
-				console.log(222);
 				var map = $('#map');
 
 				$.each(sectors, function (i, sector) {
-					console.log(333);
 					var sectorElm = $('<div id="' + sector.id + '"></div>');
 
 					sectorElm.css({
@@ -15,13 +12,47 @@ var Map = (function () {
 						left: sector.x
 					});
 
+					sectorElm.data(sector);
+
 					map.append(sectorElm);
+				});
+			});
+		},
+		initSelect: function () {
+
+		},
+		initHover: function () {
+			var navigation = $('#navigation');
+			$('#map').on('mouseover', 'div', function (ev) {
+				var sectorElm = $(this),
+					connector = $('<div class="connector"></div>'),
+					heading = $('<h2>' + sectorElm.data('name') + '</h2>');
+				// Should the fadeout animation not finish by the time of the new hover, force removal.
+				navigation.find('h2, .connector').remove();
+
+				connector.css({
+					top: sectorElm.offset().top + 20,
+					left: sectorElm.offset().left + sectorElm.outerWidth(true),
+					width: navigation.outerWidth(true) - sectorElm.offset().left - sectorElm.outerWidth(true)
+				});
+				heading.css({
+					top: sectorElm.offset().top + 20,
+					left: sectorElm.offset().left + sectorElm.outerWidth(true) + connector.outerWidth(true)
+				});
+
+				navigation.append(connector);
+				navigation.append(heading);
+			}).on('mouseout', 'div', function (ev) {
+				navigation.find('h2, .connector').fadeOut(200, function () {
+					$(this).remove();
 				});
 			});
 		}
 	}, u = {
 		initialize: function () {
-			DB.onReady(r.draw);
+			r.initSelect();
+			r.initHover();
+			DB.onReady(r.drawMap);
 		}
 	};
 
