@@ -12,23 +12,39 @@ var DB = (function () {
 				cursorRequest = store.openCursor(),
 				items = [];
 
-		    transaction.oncomplete = function(event) {
-			    console.log(22222, storeName);
-		        callback(items, event);
-		    };
+			transaction.oncomplete = function(event) {
+				callback(items, event);
+			};
 
-		    cursorRequest.onsuccess = function(event) {
-		        var cursor = event.target.result;
-		        if (cursor) {
-		            items.push(cursor.value);
-		            cursor.continue();
-		        }
-		    };
+			cursorRequest.onsuccess = function(event) {
+				var cursor = event.target.result;
+				if (cursor) {
+					items.push(cursor.value);
+					cursor.continue();
+				}
+			};
 		},
-		fillObjectStore: function (transaction, storeName, items) {
+		updateData: function (transaction, storeName, data) {
 			var store = transaction.objectStore(storeName);
 
-			$.each(items || [], function (i, blob) {
+			r.getAllRecords(transaction, storeName, function (records) {
+				if (!records || records.length === 0) {
+					$.each(data || [], function (i, blob) {
+						store.add(blob);
+					});
+				}
+			});
+		},
+		updateStore: function (transaction, storeName, indices, fixtures) {
+			var store = transaction.objectStore(storeName);
+
+			$.each(indices, function (i, indexConfig) {
+				if (!store.indexNames.contains(indexConfig.name)) {
+					store.createIndex(indexConfig.name, indexConfig.name, {unique: !!indexConfig.unique});
+				}
+			});
+
+			$.each(fixtures || [], function (i, blob) {
 				store.add(blob);
 			});
 		},
@@ -36,7 +52,6 @@ var DB = (function () {
 			var store = null;
 
 			if (db.objectStoreNames.contains(storeName)) {
-				console.log(11111, storeName);
 				db.deleteObjectStore(storeName);
 			}
 
@@ -101,25 +116,25 @@ var DB = (function () {
 				result = [];
 
 			transaction.oncomplete = function(event) {
-		        callback(result, event);
-		    };
+				callback(result, event);
+			};
 
 			$.each(r.db.objectStoreNames, function (i, storeName) {
 				store = transaction.objectStore(storeName);
 				cursorRequest = store.openCursor();
 
 				cursorRequest.onsuccess = function(event) {
-			        var cursor = event.target.result,
+					var cursor = event.target.result,
 						blob = {};
 
-			        if (cursor) {
-				        blob = cursor.value;
+					if (cursor) {
+						blob = cursor.value;
 						blob.storeName = storeName;
-				        blob.key = DBConfig.stores[storeName].key;
-			            result.push(blob);
-			            cursor.continue();
-			        }
-			    };
+						blob.key = DBConfig.stores[storeName].key;
+						result.push(blob);
+						cursor.continue();
+					}
+				};
 			});
 		},
 		initialize: function () {
@@ -163,21 +178,21 @@ var DB = (function () {
 
 							callback = callback || function () {};
 
-						    transaction.oncomplete = function(event) {
-						        callback(items, event);
-						    };
+							transaction.oncomplete = function(event) {
+								callback(items, event);
+							};
 
-						    cursorRequest.onsuccess = function(event) {
-						        var cursor = event.target.result,
+							cursorRequest.onsuccess = function(event) {
+								var cursor = event.target.result,
 									blob = {};
 
-						        if (cursor) {
-							        blob = cursor.value;
+								if (cursor) {
+									blob = cursor.value;
 									blob.pk = cursor.primaryKey;
-						            items.push(blob);
-						            cursor.continue();
-						        }
-						    };
+									items.push(blob);
+									cursor.continue();
+								}
+							};
 						},
 						update: function (obj, callback) {
 							var transaction = r.db.transaction(value, 'readwrite'),
@@ -188,8 +203,8 @@ var DB = (function () {
 							callback = callback || function () {};
 
 							transaction.oncomplete = function(event) {
-						        callback(event);
-						    };
+								callback(event);
+							};
 
 							cursorRequest.onsuccess = function (event) {
 								var cursor = event.target.result,
@@ -264,22 +279,14 @@ var DB = (function () {
 						r.resetStore(db, storeName, config.indices, config.fixtures);
 					} else if (config.actionOnUpgrade === 'preserve') {
 						if (db.objectStoreNames.contains(storeName)) {
-							r.getAllRecords(transaction, storeName, function (items) {
-								r.fillObjectStore(transaction, storeName, items);
-							});
-							r.resetStore(db, storeName, config.indices, items);
+							r.updateStore(transaction, storeName, config.indices);
 						} else {
 							r.resetStore(db, storeName, config.indices, config.fixtures);
 						}
 					} else if (config.actionOnUpgrade === 'semiSmart') {
 						if (db.objectStoreNames.contains(storeName)) {
-							r.getAllRecords(transaction, storeName, function (items) {
-								if (items && items.length) {
-									r.resetStore(db, storeName, config.indices, items);
-								} else {
-									r.resetStore(db, storeName, config.indices, config.fixtures);
-								}
-							});
+							r.updateStore(transaction, storeName, config.indices);
+							r.updateData(transaction, storeName, config.fixtures);
 						} else {
 							r.resetStore(db, storeName, config.indices, config.fixtures);
 						}
@@ -288,7 +295,8 @@ var DB = (function () {
 						console.log('Smart... LOL');
 					}
 				});
-				console.log(11229304)
+
+				console.log('"onupgradeneeded" finished');
 			};
 
 			return this;

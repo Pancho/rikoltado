@@ -1,5 +1,5 @@
 var DBConfig = {
-	version: 11,
+	version: 14,
 	name: 'rikoltado',
 	stores: {
 		player: {
@@ -14,15 +14,106 @@ var DBConfig = {
 				}
 			]
 		},
+		drugs: {
+			actionOnUpgrade: 'empty',
+			key: 'name',
+			recoveryRules: {},
+			indices: [
+				{
+					name: 'name',
+					unique: false
+				}
+			],
+			fixtures: [
+				{
+					name: 'Heroin',
+					minPrice: 400,
+					maxPrice: 500,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				},
+				{
+					name: 'Morphine',
+					minPrice: 8,
+					maxPrice: 12,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				},
+				{
+					name: 'Opium',
+					minPrice: 15,
+					maxPrice: 20,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				},
+				{
+					name: 'Amphetamine',
+					minPrice: 20,
+					maxPrice: 35,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				},
+				{
+					name: 'Methamphetamine',
+					minPrice: 90,
+					maxPrice: 130,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				},
+				{
+					name: 'Ecstasy',
+					minPrice: 15,
+					maxPrice: 25,
+					unit: 'Tablet',
+					unitPlural: 'Tablets'
+				},
+				{
+					name: 'Marijuana',
+					minPrice: 8,
+					maxPrice: 12,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				},
+				{
+					name: 'Mushrooms',
+					minPrice: 7,
+					maxPrice: 10,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				},
+				{
+					name: 'LSD',
+					minPrice: 8,
+					maxPrice: 12,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				},
+				{
+					name: 'Cocaine',
+					minPrice: 130,
+					maxPrice: 160,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				},
+				{
+					name: 'Crack Cocaine',
+					minPrice: 190,
+					maxPrice: 230,
+					unit: 'Gram',
+					unitPlural: 'Grams'
+				}
+			]
+		},
 		sectors: {
 			actionOnUpgrade: 'empty',
 			key: 'id',
-			recoveryRules: {
-
-			},
-			indices: {
-
-			},
+			recoveryRules: {},
+			indices: [
+				{
+					name: 'name',
+					unique: false
+				}
+			],
 			fixtures: [
 				{
 				name: 'Emmet',
