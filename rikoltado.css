@@ -9,10 +9,9 @@ body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.p
 #navigation h2 {position:absolute;background-color:#fff;color:#000;font-size:15px;line-height:1;padding:5px 10px;}
 #navigation .connector {position:absolute;height:1px;background-color:#fff;}
 
-#navigation #actions {}
-#navigation #actions li {}
-#navigation #actions li a {}
+#navigation #actions {margin:5px 0 0 0;}
+#navigation #actions li {font-size:13px;line-height:15px;padding:5px 10px;text-align:center;background-color:#2980b9;margin:0 0 5px 0;cursor:pointer;}
+#navigation #actions li:hover {background-color:#2977af;}
 
-#navigation #info {}
-#navigation #info li {}
-#navigation #info li a {}
+#navigation #info {margin:10px 0 0 0;}
+#navigation #info li {font-size:15px;margin:0 0 10px 0;}

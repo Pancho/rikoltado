@@ -23,17 +23,22 @@ var Map = (function () {
 
 			$('#map').on('click', 'div', function () {
 				var sectorElm = $(this),
-					info = $('<ul id="info">' +
-							'<li class="travel">Travel to</li>' +
-							'<li class="scout">Send Scout</li>' +
-							'<li class="bribe-police">Bribe Police</li>' +
+
+					actions = $('<ul id="actions">' +
+							'<li class="travel" title="Travel to this sector">Travel to</li>' +
+							'<li class="informant" title="Informant will report their expectations for the prices in this sector">Call Informant</li>' +
+							'<li class="bribe-police" title="Bribe the police in this sector so you are less likely to be attacked">Bribe Police</li>' +
+							'<li class="sabotage-rivals" title="Sabotage rivals in your trade, so you will be more likely to have exclusive offer">Sabotage Rivals</li>' +
 						'</ul>'),
-					actions = $('<ol id="actions"></ol>');
+					info = $('<ol id="info">' +
+						'<li>' + sectorElm.data('name') + '</li>' +
+						'<li>Population - ' + sectorElm.data('population') + '</li>' +
+						'</ol>');
 
 				navigation.find('#info, #actions').remove();
 
-				navigation.append(actions);
 				navigation.append(info);
+				navigation.append(actions);
 			});
 		},
 		initHover: function () {

@@ -5,8 +5,7 @@ var DBConfig = {
 		player: {
 			actionOnUpgrade: 'semiSmart',
 			key: 'name',
-			recoveryRules: {
-			},
+			recoveryRules: {},
 			indices: [
 				{
 					name: 'name',
@@ -85,8 +84,8 @@ var DBConfig = {
 					name: 'LSD',
 					minPrice: 8,
 					maxPrice: 12,
-					unit: 'Gram',
-					unitPlural: 'Grams'
+					unit: 'Hit',
+					unitPlural: 'Hits'
 				},
 				{
 					name: 'Cocaine',
