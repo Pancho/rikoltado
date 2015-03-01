@@ -19,7 +19,22 @@ var Map = (function () {
 			});
 		},
 		initSelect: function () {
+			var navigation = $('#navigation');
 
+			$('#map').on('click', 'div', function () {
+				var sectorElm = $(this),
+					info = $('<ul id="info">' +
+							'<li class="travel">Travel to</li>' +
+							'<li class="scout">Send Scout</li>' +
+							'<li class="bribe-police">Bribe Police</li>' +
+						'</ul>'),
+					actions = $('<ol id="actions"></ol>');
+
+				navigation.find('#info, #actions').remove();
+
+				navigation.append(actions);
+				navigation.append(info);
+			});
 		},
 		initHover: function () {
 			var navigation = $('#navigation');

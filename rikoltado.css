@@ -12,3 +12,7 @@ body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.p
 #navigation #actions {}
 #navigation #actions li {}
 #navigation #actions li a {}
+
+#navigation #info {}
+#navigation #info li {}
+#navigation #info li a {}

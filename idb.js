@@ -13,6 +13,7 @@ var DB = (function () {
 				items = [];
 
 		    transaction.oncomplete = function(event) {
+			    console.log(22222, storeName);
 		        callback(items, event);
 		    };
 
@@ -24,10 +25,18 @@ var DB = (function () {
 		        }
 		    };
 		},
+		fillObjectStore: function (transaction, storeName, items) {
+			var store = transaction.objectStore(storeName);
+
+			$.each(items || [], function (i, blob) {
+				store.add(blob);
+			});
+		},
 		resetStore: function (db, storeName, indices, fixtures) {
 			var store = null;
 
 			if (db.objectStoreNames.contains(storeName)) {
+				console.log(11111, storeName);
 				db.deleteObjectStore(storeName);
 			}
 
@@ -256,8 +265,9 @@ var DB = (function () {
 					} else if (config.actionOnUpgrade === 'preserve') {
 						if (db.objectStoreNames.contains(storeName)) {
 							r.getAllRecords(transaction, storeName, function (items) {
-								r.resetStore(db, storeName, config.indices, items);
+								r.fillObjectStore(transaction, storeName, items);
 							});
+							r.resetStore(db, storeName, config.indices, items);
 						} else {
 							r.resetStore(db, storeName, config.indices, config.fixtures);
 						}
@@ -278,8 +288,7 @@ var DB = (function () {
 						console.log('Smart... LOL');
 					}
 				});
-
-				console.log('"onupgradeneeded" finished');
+				console.log(11229304)
 			};
 
 			return this;
