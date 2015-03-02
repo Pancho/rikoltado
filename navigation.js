@@ -1,4 +1,4 @@
-var Map = (function () {
+var Navigation = (function () {
 	var r = {
 		drawMap: function () {
 			DB.sectors.all(function (sectors) {
@@ -16,6 +16,14 @@ var Map = (function () {
 
 					map.append(sectorElm);
 				});
+			});
+		},
+		updateDatapad: function () {
+			Player.getPlayer(function (player) {
+				$('#selected-sector').text('Currently in ' + player.currentSector.name);
+				$('#wealth .cash .amount').text('$ ' + player.cash.toFixed(2));
+				$('#wealth .laundered .amount').text('$ ' + player.laundered.toFixed(2));
+				$('#wealth .loan .amount').text('$ ' + player.loan.toFixed(2));
 			});
 		},
 		initSelect: function () {
@@ -73,6 +81,7 @@ var Map = (function () {
 			r.initSelect();
 			r.initHover();
 			DB.onReady(r.drawMap);
+			DB.onReady(r.updateDatapad);
 		}
 	};
 

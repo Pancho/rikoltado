@@ -85,5 +85,8 @@ var Utils = {
 	},
 	randomSign: function () {
 		return Math.random() < 0.5 ? -1 : 1
+	},
+	randomChoice: function (list) {
+		return list[Math.floor(Math.random() * list.length)];
 	}
 };

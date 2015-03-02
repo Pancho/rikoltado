@@ -15,3 +15,14 @@ body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.p
 
 #navigation #info {margin:10px 0 0 0;}
 #navigation #info li {font-size:15px;margin:0 0 10px 0;}
+
+#city {position:absolute;top:21px;left:300px;}
+#city #datapad {border-bottom:1px solid #fff;padding:0 50px;}
+#city #datapad li {display:inline-block;font-size:14px;padding:5px 20px;margin:0 0 -1px 0;cursor:pointer;}
+#city #datapad li.selected {border-width:1px;border-style:solid;border-color:#fff #fff #000 #fff;}
+#city #datapad #selected-sector {border:none;margin:0 30px;background-color:#fff;color:#000;}
+#city #datapad #wealth {text-align:right;margin:0 0 -1px 200px;}
+#city #datapad #wealth div {display:inline-block;margin:0 20px;}
+#city #datapad #wealth .cash {font-size:20px;color:#32ff0c;}
+#city #datapad #wealth .laundered {color:#fff;}
+#city #datapad #wealth .loan {color:#ff0c10;}
