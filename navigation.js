@@ -24,6 +24,9 @@ var Navigation = (function () {
 				$('#wealth .cash .amount').text('$ ' + player.cash.toFixed(2));
 				$('#wealth .laundered .amount').text('$ ' + player.laundered.toFixed(2));
 				$('#wealth .loan .amount').text('$ ' + player.loan.toFixed(2));
+
+				$('#map div').removeClass('selected');
+				$('#' + player.currentSector.id).addClass('selected');
 			});
 		},
 		initSelect: function () {
@@ -31,7 +34,6 @@ var Navigation = (function () {
 
 			$('#map').on('click', 'div', function () {
 				var sectorElm = $(this),
-
 					actions = $('<ul id="actions">' +
 							'<li class="travel" title="Travel to this sector">Travel to</li>' +
 							'<li class="informant" title="Informant will report their expectations for the prices in this sector">Call Informant</li>' +
@@ -45,8 +47,30 @@ var Navigation = (function () {
 
 				navigation.find('#info, #actions').remove();
 
-				navigation.append(info);
-				navigation.append(actions);
+				actions.data(sectorElm.data());
+				info.data(sectorElm.data());
+
+				Player.getPlayer(function (player) {
+					if (player.currentSector.name !== sectorElm.data('name')) {
+						navigation.append(info);
+						navigation.append(actions);
+					}
+				});
+
+			});
+		},
+		initActions: function () {
+			var navigation = $('#navigation');
+
+			navigation.on('click', '.travel', function () {
+				var blob = $('#actions').data();
+				$('#selected-sector').text('Currently in ' + blob.name);
+				Player.getPlayer(function (player) {
+					player.currentSector = blob;
+					Player.save();
+					$('#map div').removeClass('selected');
+					$('#' + player.currentSector.id).addClass('selected');
+				});
 			});
 		},
 		initHover: function () {
@@ -82,6 +106,7 @@ var Navigation = (function () {
 			r.initHover();
 			DB.onReady(r.drawMap);
 			DB.onReady(r.updateDatapad);
+			DB.onReady(r.initActions);
 		}
 	};
 

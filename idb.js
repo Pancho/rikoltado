@@ -202,6 +202,7 @@ var DB = (function () {
 
 							if (!obj.pk) { // No primary key, no updating
 								u[value].add(obj, callback);
+								return;
 							}
 
 							keyRange = r.IDBKeyRange.only(obj.pk);

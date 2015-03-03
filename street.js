@@ -3,10 +3,13 @@ var Street = (function () {
 
 	}, u = {
 		destroy: function () {
-
+			$('#street').remove();
 		},
 		draw: function () {
-			
+			var city = $('#city');
+			Drugs.generateDrugState({}, function (pricelist) {
+				console.log(pricelist);
+			});
 		}
 	};
 

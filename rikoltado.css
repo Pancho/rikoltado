@@ -1,9 +1,10 @@
 body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.png) left top repeat-x;width:1200px;}
 
-#navigation {margin:50px;width:250px;}
+#navigation {margin:70px 50px 50px 50px;width:250px;}
 
 #navigation #map {background:transparent url(/map.png) left top no-repeat;width:250px;height:250px;position:relative;}
 #navigation #map div {position:absolute;width:68px;height:68px;border:1px solid #fff;cursor:pointer;}
+#navigation #map div.selected {border:1px solid #fff82b;}
 #navigation #map div:hover {border-color:#d2d2d2;background-color:rgba(0,0,0,.3);}
 
 #navigation h2 {position:absolute;background-color:#fff;color:#000;font-size:15px;line-height:1;padding:5px 10px;}
@@ -16,13 +17,14 @@ body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.p
 #navigation #info {margin:10px 0 0 0;}
 #navigation #info li {font-size:15px;margin:0 0 10px 0;}
 
-#city {position:absolute;top:21px;left:300px;width:900px;}
+#city {position:absolute;top:45px;left:300px;width:900px;}
 #city #datapad {border-bottom:1px solid #fff;position:relative;}
-#city #datapad li {display:inline-block;font-size:14px;padding:5px 20px;margin:0 0 -1px 0;cursor:pointer;}
-#city #datapad li.selected {border-width:1px;border-style:solid;border-color:#fff #fff #000 #fff;}
-#city #datapad #selected-sector {border:none;margin:0 30px;background-color:#fff;color:#000;}
-#city #datapad #wealth {position:absolute;}
-#city #datapad #wealth div {margin:0 0 20px 0;}
-#city #datapad #wealth .cash {font-size:20px;color:#32ff0c;}
-#city #datapad #wealth .laundered {color:#fff;}
-#city #datapad #wealth .loan {color:#ff0c10;}
+#city #datapad #gps {}
+#city #datapad #gps li {display:inline-block;font-size:14px;padding:5px 20px;margin:0 0 -1px 0;cursor:pointer;}
+#city #datapad #gps li.selected {border-width:1px;border-style:solid;border-color:#fff #fff #000 #fff;}
+#city #datapad #gps #selected-sector {border:none;margin:0 30px;background-color:#fff;color:#000;cursor:inherit;}
+#city #datapad #wealth {position:absolute;top:-25px;right:0;}
+#city #datapad #wealth div {margin:0 0 0 5px;display:inline-block;}
+#city #datapad #wealth .cash {font-size:15px;color:#32ff0c;}
+#city #datapad #wealth .laundered {color:#fff;font-size:10px;}
+#city #datapad #wealth .loan {color:#ff0c10;font-size:10px;}

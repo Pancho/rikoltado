@@ -1,5 +1,5 @@
 var DBConfig = {
-	version: 14,
+	version: 1,
 	name: 'rikoltado',
 	stores: {
 		player: {
