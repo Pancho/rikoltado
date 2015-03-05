@@ -28,3 +28,28 @@ body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.p
 #city #datapad #wealth .cash {font-size:15px;color:#32ff0c;}
 #city #datapad #wealth .laundered {color:#fff;font-size:10px;}
 #city #datapad #wealth .loan {color:#ff0c10;font-size:10px;}
+
+#street {margin:30px;}
+#street h2 {font-size:15px;border-bottom:1px solid #fff;padding:0 0 5px 0;margin:0 0 5px 0;}
+#street div {display:inline-block;vertical-align:top;}
+#street .drugs {width:300px;}
+#street .drugs ul {}
+#street .drugs ul li {margin:0 0 5px 0;padding:5px;letter-spacing:-4px;cursor:pointer;}
+#street .drugs ul li.selected {background-color:#383838;}
+#street .drugs ul li span {font-size:13px;letter-spacing:normal;word-spacing:normal;display:inline-block;}
+#street .drugs ul li .name {width:200px;}
+#street .drugs ul li .price {width:60px;}
+#street .drugs ul li .amount {width:30px;}
+#street .transaction {width:200px;}
+#street .transaction form {}
+#street .transaction form fieldset {}
+#street .transaction form fieldset legend {font-size:15px;width:190px;border-bottom:1px solid #fff;padding:0 10px 5px 10px;margin:0 0 5px 0;}
+#street .transaction form fieldset ol {padding:0 10px;width:180px;}
+#street .transaction form fieldset ol li {}
+#street .transaction form fieldset ol li label {display:block;font-size:15px;margin:0 0 10px 0;}
+#street .transaction form fieldset ol li input {display:block;font-size:20px;padding:5px;width:170px;border:none;}
+#street .transaction form fieldset ol.shortcuts {margin:10px 0 0 0;}
+#street .transaction form fieldset ol.shortcuts li {text-align:center;width:40px;display:inline-block;padding:5px 0;background-color:#fff;color:#000;margin:0 0 0 30px;cursor:pointer;}
+#street .transaction form fieldset ol.shortcuts li:nth-child(1) {margin:0;}
+#street .transaction form fieldset .control {padding:0 10px;margin:10px 0 0 0;}
+#street .transaction form fieldset .control input {display:block;width:180px;text-align:center;padding:5px 0;background-color:#fff;color:#000;border:none;}

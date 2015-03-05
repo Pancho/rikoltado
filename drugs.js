@@ -25,6 +25,7 @@ var Drugs = (function () {
 					var blob = {
 						name: drug.name,
 						price: Math.round(Utils.randomChoice(r.buildRange(drug.minPrice, drug.maxPrice)) * 100) / 100,
+						amount: Utils.randomFromRange(0, Utils.randomFromRange(0, 1000)),
 						unit: drug.unit,
 						unitPlural: drug.unitPlural
 					};

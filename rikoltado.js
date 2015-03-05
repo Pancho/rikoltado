@@ -4,6 +4,7 @@ var Rikoltado = (function () {
 	}, u = {
 		initialize: function () {
 			Navigation.initialize();
+			Street.initialize();
 			DB.onReady(function () {
 
 			});

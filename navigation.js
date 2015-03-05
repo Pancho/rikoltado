@@ -16,6 +16,13 @@ var Navigation = (function () {
 
 					map.append(sectorElm);
 				});
+
+				Player.getPlayer(function (player) {
+					$('#map div').removeClass('selected');
+					$('#' + player.currentSector.id).addClass('selected');
+				});
+
+				Street.draw();
 			});
 		},
 		updateDatapad: function () {
@@ -45,15 +52,15 @@ var Navigation = (function () {
 						'<li>Population - ' + sectorElm.data('population') + '</li>' +
 						'</ol>');
 
-				navigation.find('#info, #actions').remove();
-
-				actions.data(sectorElm.data());
-				info.data(sectorElm.data());
-
 				Player.getPlayer(function (player) {
 					if (player.currentSector.name !== sectorElm.data('name')) {
+						navigation.find('#info, #actions').remove();
+						actions.data(sectorElm.data());
+						info.data(sectorElm.data());
 						navigation.append(info);
 						navigation.append(actions);
+						$('#map div').removeClass('selected');
+						$('#' + player.currentSector.id).addClass('selected');
 					}
 				});
 
@@ -66,10 +73,15 @@ var Navigation = (function () {
 				var blob = $('#actions').data();
 				$('#selected-sector').text('Currently in ' + blob.name);
 				Player.getPlayer(function (player) {
-					player.currentSector = blob;
-					Player.save();
-					$('#map div').removeClass('selected');
-					$('#' + player.currentSector.id).addClass('selected');
+					Drugs.generateDrugState({}, function (pricelist) {
+						navigation.find('#info, #actions').remove();
+						blob.street = pricelist;
+						player.currentSector = blob;
+						Player.save();
+						$('#map div').removeClass('selected');
+						$('#' + player.currentSector.id).addClass('selected');
+						Street.draw(player);
+					});
 				});
 			});
 		},

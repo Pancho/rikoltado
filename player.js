@@ -7,7 +7,12 @@ var Player = (function () {
 				created: new Date(),
 				loan: 50000,
 				cash: 1000,
-				laundered: 0
+				laundered: 0,
+				drugs: {},
+				drugCapacity: 200,
+				extraCapacity: [],
+				armor: {},
+				weapon: {}
 			};
 
 			DB.sectors.all(function (sectors) {
