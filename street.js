@@ -16,7 +16,8 @@ var Street = (function () {
 						'<div class="drugs" id="player-contents"><h2>Your drugs</h2><ul></ul></div>' +
 					'</div>'),
 				streetContents = street.find('#street-contents ul'),
-				playerContents = street.find('#player-contents ul');
+				playerContents = street.find('#player-contents ul'),
+				streetPriceMap = {};
 
 			streetContents.data(streetDrugs);
 			playerContents.data(playerDrugs);
@@ -25,6 +26,8 @@ var Street = (function () {
 
 			$.each(streetDrugs, function (i, drug) {
 				var item = $('<li></li>');
+
+				streetPriceMap[drug.name] = drug.price;
 
 				if (drug.amount > 0) {
 					item.data(drug);
@@ -36,12 +39,17 @@ var Street = (function () {
 				}
 			});
 
-			$.each(playerDrugs, function (name, quantity) {
+			$.each(playerDrugs, function (name, amount) {
 				var item = $('<li></li>');
 
-				item.data('side', 'sell');
+				item.data({
+					side: 'sell',
+					name: name,
+					amount: amount,
+					price: streetPriceMap[name]
+				});
 				item.append('<span class="name">' + name + '</span>');
-				item.append('<span class="amount">' + quantity + '</span>');
+				item.append('<span class="amount">' + amount + '</span>');
 
 				playerContents.append(item);
 			});
@@ -51,7 +59,7 @@ var Street = (function () {
 		initDrugSelection: function () {
 			var city = $('#city');
 
-			city.on('click', '#street-contents li', function (ev) {
+			city.on('click', '#street-contents li, #player-contents li', function (ev) {
 				var transaction = $('#transaction'),
 					listItem = $(this);
 
@@ -98,7 +106,7 @@ var Street = (function () {
 									'<li data-amount="all">All</li>' +
 								'</ol>' +
 								'<div class="control">' +
-									'<input type="submit" class="button" id="submit" name="submit" value="Buy" />' +
+									'<input type="submit" class="button" id="submit" name="submit" value="Sell" />' +
 								'</div>' +
 							'</fieldset>' +
 						'</form>');
@@ -124,7 +132,7 @@ var Street = (function () {
 				r.updateTransactionValue();
 			});
 
-			city.on('input', '#transaction input.buy', function (ev) {
+			city.on('input', '#transaction input', function (ev) {
 				var clicked = $(this),
 					available = $('#transaction').data('amount');
 
@@ -140,7 +148,26 @@ var Street = (function () {
 
 				ev.preventDefault();
 
-				Player.buyDrugs(transaction.data(), parseInt(transaction.find('.amount').val(), 10))
+				Player.buyDrugs(transaction.data(), parseInt(transaction.find('.amount').val(), 10), function (result) {
+					var newAmount = result.newAmount;
+					transaction.find('.error, .success').remove();
+					if (result.error) {
+						transaction.append('<p class="error">' + result.error + '</p>');
+						transaction.append('<p class="error">' + result.helper + '</p>');
+					} else {
+						transaction.append('<p class="success">' + result.success + '</p>');
+					}
+
+					if (newAmount === 0) {
+						$('#street-contents li.selected').remove();
+					} else {
+						$('#street-contents li.selected .amount').text(newAmount);
+					}
+
+					setTimeout(function () {
+						transaction.find('.error, .success').fadeOut(300);
+					}, 2000);
+				});
 			});
 		}
 	}, u = {

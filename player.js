@@ -70,8 +70,9 @@ var Player = (function () {
 						if (price > player.cash) {
 							callback({
 								error: 'You don\'t have enough cash',
-								helper: 'You can only buy ' + Math.floor(player.cash / price) + ' ' + (Math.floor(player.cash / price) === 1 ? streetDrug.unit : streetDrug.unitPlural)
+								helper: 'You can only buy ' + Math.floor(player.cash / streetDrug.price) + ' ' + (Math.floor(player.cash / streetDrug.price) === 1 ? streetDrug.unit : streetDrug.unitPlural)
 							});
+							return;
 						}
 
 						if (r.currentCapacity(player) + amount > player.drugCapacity) {
@@ -79,6 +80,7 @@ var Player = (function () {
 								error: 'You have nowhere to store these drugs',
 								helper: 'You can only store ' + (player.drugCapacity - r.currentCapacity(player)) + ' more ' + ((player.drugCapacity - r.currentCapacity(player) === 1 ? streetDrug.unit : streetDrug.unitPlural))
 							});
+							return;
 						}
 
 						// Here chances of getting caught should be resolved
@@ -92,11 +94,11 @@ var Player = (function () {
 
 						u.setPlayer(player);
 						u.save();
-						Street.draw();
 						Navigation.updateDatapad();
 
 						callback({
-							success: 'Bought ' + amount + ' ' + (amount === 1 ? streetDrug.unit : streetDrug.unitPlural) + ' of ' + streetDrug.name
+							success: 'Bought ' + amount + ' ' + (amount === 1 ? streetDrug.unit : streetDrug.unitPlural) + ' of ' + streetDrug.name,
+							newAmount: streetDrug.amount
 						});
 					}
 				});
