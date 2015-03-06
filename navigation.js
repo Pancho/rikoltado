@@ -25,17 +25,6 @@ var Navigation = (function () {
 				Street.draw();
 			});
 		},
-		updateDatapad: function () {
-			Player.getPlayer(function (player) {
-				$('#selected-sector').text('Currently in ' + player.currentSector.name);
-				$('#wealth .cash .amount').text('$ ' + player.cash.toFixed(2));
-				$('#wealth .laundered .amount').text('$ ' + player.laundered.toFixed(2));
-				$('#wealth .loan .amount').text('$ ' + player.loan.toFixed(2));
-
-				$('#map div').removeClass('selected');
-				$('#' + player.currentSector.id).addClass('selected');
-			});
-		},
 		initSelect: function () {
 			var navigation = $('#navigation');
 
@@ -113,11 +102,22 @@ var Navigation = (function () {
 			});
 		}
 	}, u = {
+		updateDatapad: function () {
+			Player.getPlayer(function (player) {
+				$('#selected-sector').text('Currently in ' + player.currentSector.name);
+				$('#wealth .cash .amount').text('$ ' + player.cash.toFixed(2));
+				$('#wealth .laundered .amount').text('$ ' + player.laundered.toFixed(2));
+				$('#wealth .loan .amount').text('$ ' + player.loan.toFixed(2));
+
+				$('#map div').removeClass('selected');
+				$('#' + player.currentSector.id).addClass('selected');
+			});
+		},
 		initialize: function () {
 			r.initSelect();
 			r.initHover();
 			DB.onReady(r.drawMap);
-			DB.onReady(r.updateDatapad);
+			DB.onReady(u.updateDatapad);
 			DB.onReady(r.initActions);
 		}
 	};
