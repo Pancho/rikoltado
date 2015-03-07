@@ -209,13 +209,8 @@ var Street = (function () {
 			$('#street').remove();
 		},
 		draw: function (player) {
-			if (player) {
-				r.fillStreetContents(player.currentSector.street, player.drugs);
-			} else {
-				Player.getPlayer(function (player) {
-					r.fillStreetContents(player.currentSector.street, player.drugs);
-				});
-			}
+			player = player || Player.getPlayer();
+			r.fillStreetContents(player.currentSector.street, player.drugs);
 		},
 		initialize: function () {
 			r.initDrugSelection();

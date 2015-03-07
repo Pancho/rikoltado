@@ -1,10 +1,10 @@
 var Player = (function () {
 	var r = {
 		player: null,
-		currentCapacity: function (player) {
+		currentCapacity: function () {
 			var result = 0;
 
-			$.each(player.drugs, function (name, amount) {
+			$.each(r.player.drugs, function (name, amount) {
 				result += amount;
 			});
 
@@ -36,114 +36,108 @@ var Player = (function () {
 		save: function (player) {
 			DB.player.update(r.player);
 		},
-		getPlayer: function (callback) {
-			if (r.player) {
-				callback(r.player);
-			} else {
-				DB.player.all(function (players) {
-					if (!players || players.length === 0) {
-						r.getNew(callback);
-					} else {
-						players.sort(function (a, b) {
-							return new Date(b.created) - new Date(a.created);
-						});
-
-						r.player = players[0];
-
-						callback(r.player);
-					}
-				});
-			}
+		getPlayer: function () {
+			return r.player;
 		},
 		setPlayer: function (player) {
 			r.player = player;
 		},
+		loadPlayer: function (callback) {
+			DB.player.all(function (players) {
+				if (!players || players.length === 0) {
+					r.getNew(callback);
+				} else {
+					players.sort(function (a, b) {
+						return new Date(b.created) - new Date(a.created);
+					});
+
+					r.player = players[0];
+
+					callback(r.player);
+				}
+			});
+		},
 		sellDrugs: function (drug, amount, callback) {
-			u.getPlayer(function (player) {
-				$.each(player.currentSector.street, function (i, streetDrug) {
-					var price = 0;
-					if (streetDrug.name === drug.name) {
-						if (player.drugs[drug.name] < amount) {
-							amount = player.drugs[drug.name];
-						}
-
-						if (amount <= 0) {
-							callback({
-								error: 'You have to sell something'
-							});
-							return;
-						}
-
-						streetDrug.amount += amount;
-						player.cash += (drug.price * amount);
-						player.drugs[drug.name] -= amount;
-						player.drugCapacity -= amount;
-
-						u.setPlayer(player);
-						u.save();
-						Navigation.updateDatapad();
-
-						callback({
-							success: 'Sold ' + amount + ' ' + (amount === 1 ? streetDrug.unit : streetDrug.unitPlural) + ' of ' + streetDrug.name,
-							player: player
-						});
+			$.each(r.player.currentSector.street, function (i, streetDrug) {
+				var price = 0;
+				if (streetDrug.name === drug.name) {
+					if (r.player.drugs[drug.name] < amount) {
+						amount = r.player.drugs[drug.name];
 					}
-				});
+
+					if (amount <= 0) {
+						callback({
+							error: 'You have to sell something'
+						});
+						return;
+					}
+
+					streetDrug.amount += amount;
+					r.player.cash += (drug.price * amount);
+					r.player.drugs[drug.name] -= amount;
+					r.player.drugCapacity += amount;
+
+					u.save();
+					Navigation.updateDatapad();
+
+					callback({
+						success: 'Sold ' + amount + ' ' + (amount === 1 ? streetDrug.unit : streetDrug.unitPlural) + ' of ' + streetDrug.name,
+						player: r.player
+					});
+				}
 			});
 		},
 		buyDrugs: function (drug, amount, callback) {
-			u.getPlayer(function (player) {
-				$.each(player.currentSector.street, function (i, streetDrug) {
-					var price = 0;
-					if (streetDrug.name === drug.name) {
-						if (amount > streetDrug.amount) {
-							amount = streetDrug.amount;
-						}
-						price = drug.price * amount;
-
-						if (amount < 0) {
-							callback({
-								error: 'You have to buy something'
-							});
-							return;
-						}
-
-						if (price > player.cash) {
-							callback({
-								error: 'You don\'t have enough cash',
-								helper: 'You can only buy ' + Math.floor(player.cash / streetDrug.price) + ' ' + (Math.floor(player.cash / streetDrug.price) === 1 ? streetDrug.unit : streetDrug.unitPlural)
-							});
-							return;
-						}
-
-						if (r.currentCapacity(player) + amount > player.drugCapacity) {
-							callback({
-								error: 'You have nowhere to store these drugs',
-								helper: 'You can only store ' + (player.drugCapacity - r.currentCapacity(player)) + ' more ' + ((player.drugCapacity - r.currentCapacity(player) === 1 ? streetDrug.unit : streetDrug.unitPlural))
-							});
-							return;
-						}
-
-						// Here chances of getting caught should be resolved
-
-						streetDrug.amount -= amount;
-						player.cash -= (drug.price * amount);
-						if (!player.drugs[drug.name]) {
-							player.drugs[drug.name] = 0;
-						}
-						player.drugs[drug.name] += amount;
-						player.drugCapacity += amount;
-
-						u.setPlayer(player);
-						u.save();
-						Navigation.updateDatapad();
-
-						callback({
-							success: 'Bought ' + amount + ' ' + (amount === 1 ? streetDrug.unit : streetDrug.unitPlural) + ' of ' + streetDrug.name,
-							player: player
-						});
+			$.each(r.player.currentSector.street, function (i, streetDrug) {
+				var price = 0;
+				if (streetDrug.name === drug.name) {
+					if (amount > streetDrug.amount) {
+						amount = streetDrug.amount;
 					}
-				});
+					price = drug.price * amount;
+
+					if (amount < 0) {
+						callback({
+							error: 'You have to buy something'
+						});
+						return;
+					}
+
+					if (price > r.player.cash) {
+						callback({
+							error: 'You don\'t have enough cash',
+							helper: 'You can only buy ' + Math.floor(r.player.cash / streetDrug.price) + ' ' + (Math.floor(r.player.cash / streetDrug.price) === 1 ? streetDrug.unit : streetDrug.unitPlural)
+						});
+						return;
+					}
+
+					if (r.currentCapacity() + amount > r.player.drugCapacity) {
+						callback({
+							error: 'You have nowhere to store these drugs',
+							helper: 'You can only store ' + (r.player.drugCapacity - r.currentCapacity()) + ' more ' + ((r.player.drugCapacity - r.currentCapacity() === 1 ? streetDrug.unit : streetDrug.unitPlural))
+						});
+						return;
+					}
+
+					// Here chances of getting caught should be resolved
+
+					streetDrug.amount -= amount;
+					r.player.cash -= (drug.price * amount);
+					if (!r.player.drugs[drug.name]) {
+						r.player.drugs[drug.name] = 0;
+					}
+					r.player.drugs[drug.name] += amount;
+					r.player.drugCapacity -= amount;
+
+					u.setPlayer(r.player);
+					u.save();
+					Navigation.updateDatapad();
+
+					callback({
+						success: 'Bought ' + amount + ' ' + (amount === 1 ? streetDrug.unit : streetDrug.unitPlural) + ' of ' + streetDrug.name,
+						player: r.player
+					});
+				}
 			});
 		}
 	};

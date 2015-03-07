@@ -269,6 +269,8 @@ var DB = (function () {
 					};
 				});
 
+				console.log(u);
+
 				r.deferred.resolve();
 			};
 

@@ -2,7 +2,8 @@ var Navigation = (function () {
 	var r = {
 		drawMap: function () {
 			DB.sectors.all(function (sectors) {
-				var map = $('#map');
+				var map = $('#map'),
+					player = Player.getPlayer();
 
 				$.each(sectors, function (i, sector) {
 					var sectorElm = $('<div id="' + sector.id + '"></div>');
@@ -17,16 +18,15 @@ var Navigation = (function () {
 					map.append(sectorElm);
 				});
 
-				Player.getPlayer(function (player) {
-					$('#map div').removeClass('selected');
-					$('#' + player.currentSector.id).addClass('selected');
-				});
+				$('#map div').removeClass('selected');
+				$('#' + player.currentSector.id).addClass('selected');
 
 				Street.draw();
 			});
 		},
 		initSelect: function () {
-			var navigation = $('#navigation');
+			var navigation = $('#navigation'),
+				player = Player.getPlayer();
 
 			$('#map').on('click', 'div', function () {
 				var sectorElm = $(this),
@@ -41,18 +41,15 @@ var Navigation = (function () {
 						'<li>Population - ' + sectorElm.data('population') + '</li>' +
 						'</ol>');
 
-				Player.getPlayer(function (player) {
-					if (player.currentSector.name !== sectorElm.data('name')) {
-						navigation.find('#info, #actions').remove();
-						actions.data(sectorElm.data());
-						info.data(sectorElm.data());
-						navigation.append(info);
-						navigation.append(actions);
-						$('#map div').removeClass('selected');
-						$('#' + player.currentSector.id).addClass('selected');
-					}
-				});
-
+				if (player.currentSector.name !== sectorElm.data('name')) {
+					navigation.find('#info, #actions').remove();
+					actions.data(sectorElm.data());
+					info.data(sectorElm.data());
+					navigation.append(info);
+					navigation.append(actions);
+					$('#map div').removeClass('selected');
+					$('#' + player.currentSector.id).addClass('selected');
+				}
 			});
 		},
 		getPromises: function (player, callback) {
@@ -68,19 +65,18 @@ var Navigation = (function () {
 			var navigation = $('#navigation');
 
 			navigation.on('click', '.travel', function () {
-				var blob = $('#actions').data();
+				var blob = $('#actions').data(),
+					player = Player.getPlayer();
 				$('#selected-sector').text('Currently in ' + blob.name);
-				Player.getPlayer(function (player) {
-					r.getPromises(player, function (promises) {
-						Drugs.generateDrugState(promises, function (pricelist) {
-							navigation.find('#info, #actions').remove();
-							blob.street = pricelist;
-							player.currentSector = blob;
-							Player.save();
-							$('#map div').removeClass('selected');
-							$('#' + player.currentSector.id).addClass('selected');
-							Street.draw(player);
-						});
+				r.getPromises(player, function (promises) {
+					Drugs.generateDrugState(promises, function (pricelist) {
+						navigation.find('#info, #actions').remove();
+						blob.street = pricelist;
+						player.currentSector = blob;
+						Player.save();
+						$('#map div').removeClass('selected');
+						$('#' + player.currentSector.id).addClass('selected');
+						Street.draw(player);
 					});
 				});
 			});
@@ -114,15 +110,15 @@ var Navigation = (function () {
 		}
 	}, u = {
 		updateDatapad: function () {
-			Player.getPlayer(function (player) {
-				$('#selected-sector').text('Currently in ' + player.currentSector.name);
-				$('#wealth .cash .amount').text('$ ' + player.cash.toFixed(2));
-				$('#wealth .laundered .amount').text('$ ' + player.laundered.toFixed(2));
-				$('#wealth .loan .amount').text('$ ' + player.loan.toFixed(2));
+			var player = Player.getPlayer();
 
-				$('#map div').removeClass('selected');
-				$('#' + player.currentSector.id).addClass('selected');
-			});
+			$('#selected-sector').text('Currently in ' + player.currentSector.name);
+			$('#wealth .cash .amount').text('$ ' + player.cash.toFixed(2));
+			$('#wealth .laundered .amount').text('$ ' + player.laundered.toFixed(2));
+			$('#wealth .loan .amount').text('$ ' + player.loan.toFixed(2));
+
+			$('#map div').removeClass('selected');
+			$('#' + player.currentSector.id).addClass('selected');
 		},
 		initialize: function () {
 			r.initSelect();

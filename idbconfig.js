@@ -10,6 +10,10 @@ var DBConfig = {
 				{
 					name: 'name',
 					unique: false
+				},
+				{
+					name: 'created',
+					unique: false
 				}
 			]
 		},
