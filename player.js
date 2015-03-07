@@ -11,24 +11,25 @@ var Player = (function () {
 			return result;
 		},
 		getNew: function (callback) {
-			r.player = {
-				name: 'The Dealer',
-				created: new Date(),
-				loan: 50000,
-				cash: 1000,
-				laundered: 0,
-				drugs: {},
-				drugCapacity: 200,
-				extraCapacity: [],
-				armor: {},
-				weapon: {}
-			};
-
 			DB.sectors.all(function (sectors) {
-				r.player.currentSector = Utils.randomChoice(sectors);
-				u.save();
-
-				callback(r.player);
+				Drugs.generateDrugState({}, function (pricelist) {
+					r.player = {
+						name: 'The Dealer',
+						created: new Date(),
+						loan: 50000,
+						cash: 1000,
+						laundered: 0,
+						drugs: {},
+						drugCapacity: 200,
+						extraCapacity: [],
+						armor: {},
+						weapon: {},
+						currentSector: Utils.randomChoice(sectors)
+					};
+					r.player.currentSector.street = pricelist;
+					u.save();
+					callback(r.player);
+				});
 			});
 		}
 	}, u = {
@@ -57,6 +58,39 @@ var Player = (function () {
 		setPlayer: function (player) {
 			r.player = player;
 		},
+		sellDrugs: function (drug, amount, callback) {
+			u.getPlayer(function (player) {
+				$.each(player.currentSector.street, function (i, streetDrug) {
+					var price = 0;
+					if (streetDrug.name === drug.name) {
+						if (player.drugs[drug.name] < amount) {
+							amount = player.drugs[drug.name];
+						}
+
+						if (amount <= 0) {
+							callback({
+								error: 'You have to sell something'
+							});
+							return;
+						}
+
+						streetDrug.amount += amount;
+						player.cash += (drug.price * amount);
+						player.drugs[drug.name] -= amount;
+						player.drugCapacity -= amount;
+
+						u.setPlayer(player);
+						u.save();
+						Navigation.updateDatapad();
+
+						callback({
+							success: 'Sold ' + amount + ' ' + (amount === 1 ? streetDrug.unit : streetDrug.unitPlural) + ' of ' + streetDrug.name,
+							player: player
+						});
+					}
+				});
+			});
+		},
 		buyDrugs: function (drug, amount, callback) {
 			u.getPlayer(function (player) {
 				$.each(player.currentSector.street, function (i, streetDrug) {
@@ -66,6 +100,13 @@ var Player = (function () {
 							amount = streetDrug.amount;
 						}
 						price = drug.price * amount;
+
+						if (amount < 0) {
+							callback({
+								error: 'You have to buy something'
+							});
+							return;
+						}
 
 						if (price > player.cash) {
 							callback({
@@ -91,6 +132,7 @@ var Player = (function () {
 							player.drugs[drug.name] = 0;
 						}
 						player.drugs[drug.name] += amount;
+						player.drugCapacity += amount;
 
 						u.setPlayer(player);
 						u.save();
@@ -98,7 +140,7 @@ var Player = (function () {
 
 						callback({
 							success: 'Bought ' + amount + ' ' + (amount === 1 ? streetDrug.unit : streetDrug.unitPlural) + ' of ' + streetDrug.name,
-							newAmount: streetDrug.amount
+							player: player
 						});
 					}
 				});

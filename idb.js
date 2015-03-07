@@ -2,7 +2,7 @@ var DB = (function () {
 	var r = {
 		db: null,
 		indexedDB: null,
-		deferred: null,
+		deferred: $.Deferred(),
 		IDBKeyRange: null,
 		capitalize: function (string) {
 			return string.charAt(0).toUpperCase() + string.slice(1);
@@ -139,8 +139,6 @@ var DB = (function () {
 		},
 		initialize: function () {
 			var request = null;
-
-			r.deferred = $.Deferred();
 
 			r.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 			r.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;

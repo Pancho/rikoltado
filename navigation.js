@@ -55,6 +55,15 @@ var Navigation = (function () {
 
 			});
 		},
+		getPromises: function (player, callback) {
+			var promises = {};
+
+			console.log($('#map .selected'));
+
+			promises.priceMultiplier = 1;
+
+			callback(promises);
+		},
 		initActions: function () {
 			var navigation = $('#navigation');
 
@@ -62,14 +71,16 @@ var Navigation = (function () {
 				var blob = $('#actions').data();
 				$('#selected-sector').text('Currently in ' + blob.name);
 				Player.getPlayer(function (player) {
-					Drugs.generateDrugState({}, function (pricelist) {
-						navigation.find('#info, #actions').remove();
-						blob.street = pricelist;
-						player.currentSector = blob;
-						Player.save();
-						$('#map div').removeClass('selected');
-						$('#' + player.currentSector.id).addClass('selected');
-						Street.draw(player);
+					r.getPromises(player, function (promises) {
+						Drugs.generateDrugState(promises, function (pricelist) {
+							navigation.find('#info, #actions').remove();
+							blob.street = pricelist;
+							player.currentSector = blob;
+							Player.save();
+							$('#map div').removeClass('selected');
+							$('#' + player.currentSector.id).addClass('selected');
+							Street.draw(player);
+						});
 					});
 				});
 			});

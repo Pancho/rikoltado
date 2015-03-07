@@ -8,21 +8,16 @@ var Street = (function () {
 			transaction.find('fieldset').append('<p class="calculation">' + transaction.find('.amount').val() + ' X $' + transaction.data('price') + '</p>');
 			transaction.find('fieldset').append('<p class="result ' + transaction.data('side') + '">$' + (parseInt(transaction.find('.amount').val(), 10) * transaction.data('price')).toFixed(2) + '</p>');
 		},
-		fillStreetContents: function (streetDrugs, playerDrugs) {
-			var city = $('#city'),
-				street = $('<div id="street">' +
-						'<div class="drugs" id="street-contents"><h2>Drugs on the street</h2><ul></ul></div>' +
-						'<div class="transaction" id="transaction"></div>' +
-						'<div class="drugs" id="player-contents"><h2>Your drugs</h2><ul></ul></div>' +
-					'</div>'),
-				streetContents = street.find('#street-contents ul'),
-				playerContents = street.find('#player-contents ul'),
+		updateStreetContents: function (streetDrugs, playerDrugs) {
+			var streetContents = $('#street-contents ul'),
+				playerContents = $('#player-contents ul'),
 				streetPriceMap = {};
+
+			streetContents.empty();
+			playerContents.empty();
 
 			streetContents.data(streetDrugs);
 			playerContents.data(playerDrugs);
-
-			u.destroy();
 
 			$.each(streetDrugs, function (i, drug) {
 				var item = $('<li></li>');
@@ -42,19 +37,31 @@ var Street = (function () {
 			$.each(playerDrugs, function (name, amount) {
 				var item = $('<li></li>');
 
-				item.data({
-					side: 'sell',
-					name: name,
-					amount: amount,
-					price: streetPriceMap[name]
-				});
-				item.append('<span class="name">' + name + '</span>');
-				item.append('<span class="amount">' + amount + '</span>');
+				if (amount > 0) {
+					item.data({
+						side: 'sell',
+						name: name,
+						amount: amount,
+						price: streetPriceMap[name]
+					});
 
-				playerContents.append(item);
+					item.append('<span class="name">' + name + '</span>');
+					item.append('<span class="amount">' + amount + '</span>');
+					playerContents.append(item);
+				}
 			});
+		},
+		fillStreetContents: function (streetDrugs, playerDrugs) {
+			var city = $('#city'),
+				street = $('<div id="street">' +
+						'<div class="drugs" id="street-contents"><h2>Drugs on the street</h2><ul></ul></div>' +
+						'<div class="transaction" id="transaction"></div>' +
+						'<div class="drugs" id="player-contents"><h2>Your drugs</h2><ul></ul></div>' +
+					'</div>');
 
+			u.destroy();
 			city.append(street);
+			r.updateStreetContents(streetDrugs, playerDrugs);
 		},
 		initDrugSelection: function () {
 			var city = $('#city');
@@ -77,13 +84,16 @@ var Street = (function () {
 								'<ol>' +
 									'<li>' +
 										'<label for="amount">Amount</label>' +
-										'<input class="buy amount" type="number" id="amount" name="number" required="required" min="0" placeholder="0" step="1" /> ' +
+										'<input class="buy amount" type="number" id="amount" name="number" required="required" min="1" placeholder="0" step="1" /> ' +
 									'</li>' +
 								'</ol>' +
 								'<ol class="shortcuts">' +
 									'<li data-amount="10">+10</li>' +
 									'<li data-amount="100">+100</li>' +
 									'<li data-amount="all">All</li>' +
+									'<li data-amount="-10">-10</li>' +
+									'<li data-amount="-100">-100</li>' +
+									'<li data-amount="0">0</li>' +
 								'</ol>' +
 								'<div class="control">' +
 									'<input type="submit" class="button" id="submit" name="submit" value="Buy" />' +
@@ -97,13 +107,16 @@ var Street = (function () {
 								'<ol>' +
 									'<li>' +
 										'<label for="amount">Amount</label>' +
-										'<input class="sell amount" type="number" id="amount" name="amount" required="required" min="0" placeholder="0" step="1" /> ' +
+										'<input class="sell amount" type="number" id="amount" name="amount" required="required" min="1" placeholder="0" step="1" /> ' +
 									'</li>' +
 								'</ol>' +
 								'<ol class="shortcuts">' +
 									'<li data-amount="10">+10</li>' +
 									'<li data-amount="100">+100</li>' +
 									'<li data-amount="all">All</li>' +
+									'<li data-amount="-10">-10</li>' +
+									'<li data-amount="-100">-100</li>' +
+									'<li data-amount="0">0</li>' +
 								'</ol>' +
 								'<div class="control">' +
 									'<input type="submit" class="button" id="submit" name="submit" value="Sell" />' +
@@ -121,11 +134,17 @@ var Street = (function () {
 
 				if (amount === 'all') {
 					input.val(available);
+				} else if (amount === 0) {
+					input.val(0);
 				} else {
 					if (available >= (parseInt(input.val() || '0', 10) + amount)) {
 						input.val(parseInt(input.val() || '0', 10) + amount);
 					} else {
 						input.val(available);
+					}
+
+					if (input.val() < 0) {
+						input.val(0);
 					}
 				}
 
@@ -148,26 +167,41 @@ var Street = (function () {
 
 				ev.preventDefault();
 
-				Player.buyDrugs(transaction.data(), parseInt(transaction.find('.amount').val(), 10), function (result) {
-					var newAmount = result.newAmount;
-					transaction.find('.error, .success').remove();
-					if (result.error) {
-						transaction.append('<p class="error">' + result.error + '</p>');
-						transaction.append('<p class="error">' + result.helper + '</p>');
-					} else {
-						transaction.append('<p class="success">' + result.success + '</p>');
-					}
+				if (transaction.find('.amount').hasClass('buy')) {
+					Player.buyDrugs(transaction.data(), parseInt(transaction.find('.amount').val(), 10), function (result) {
+						transaction.find('.error, .success').remove();
+						if (result.error) {
+							transaction.append('<p class="error">' + result.error + '</p>');
+							if (result.helper) {
+								transaction.append('<p class="error">' + result.helper + '</p>');
+							}
+						} else {
+							transaction.append('<p class="success">' + result.success + '</p>');
+							r.updateStreetContents(result.player.currentSector.street, result.player.drugs);
+						}
 
-					if (newAmount === 0) {
-						$('#street-contents li.selected').remove();
-					} else {
-						$('#street-contents li.selected .amount').text(newAmount);
-					}
+						setTimeout(function () {
+							transaction.find('.error, .success').fadeOut(300);
+						}, 2000);
+					});
+				} else {
+					Player.sellDrugs(transaction.data(), parseInt(transaction.find('.amount').val(), 10), function (result) {
+						transaction.find('.error, .success').remove();
+						if (result.error) {
+							transaction.append('<p class="error">' + result.error + '</p>');
+							if (result.helper) {
+								transaction.append('<p class="error">' + result.helper + '</p>');
+							}
+						} else {
+							transaction.append('<p class="success">' + result.success + '</p>');
+							r.updateStreetContents(result.player.currentSector.street, result.player.drugs);
+						}
 
-					setTimeout(function () {
-						transaction.find('.error, .success').fadeOut(300);
-					}, 2000);
-				});
+						setTimeout(function () {
+							transaction.find('.error, .success').fadeOut(300);
+						}, 2000);
+					});
+				}
 			});
 		}
 	}, u = {

@@ -49,8 +49,9 @@ body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.p
 #street .transaction form fieldset ol li label {display:block;font-size:15px;margin:0 0 10px 0;}
 #street .transaction form fieldset ol li input {display:block;font-size:20px;padding:5px;width:170px;border:none;}
 #street .transaction form fieldset ol.shortcuts {margin:10px 0 0 0;}
-#street .transaction form fieldset ol.shortcuts li {text-align:center;width:40px;display:inline-block;padding:5px 0;background-color:#fff;color:#000;margin:0 0 0 30px;cursor:pointer;}
+#street .transaction form fieldset ol.shortcuts li {text-align:center;width:40px;display:inline-block;padding:5px 0;background-color:#fff;color:#000;margin:0 0 5px 30px;cursor:pointer;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
 #street .transaction form fieldset ol.shortcuts li:nth-child(1) {margin:0;}
+#street .transaction form fieldset ol.shortcuts li:nth-child(4) {margin:0;}
 #street .transaction form fieldset .control {padding:0 10px;margin:10px 0;}
 #street .transaction form fieldset .control input {cursor:pointer;display:block;width:180px;text-align:center;padding:5px 0;background-color:#fff;color:#000;border:none;}
 #street .transaction form fieldset .calculation {padding:0 10px 10px 10px;margin:0 10px 10px 10px;width:160px;border-bottom:1px solid #fff;font-size:15px;}
@@ -59,3 +60,5 @@ body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.p
 #street .transaction form fieldset .result.sell:before {content:"+"}
 #street .transaction form fieldset .result.buy {color:#e74c3c;}
 #street .transaction form fieldset .result.buy:before {content:"-"}
+#street .transaction .error {color:#e74c3c;padding:0 10px;margin:10px;width:160px;font-size:15px;line-height:20px;}
+#street .transaction .success {color:#27ae60;padding:0 10px;margin:10px;width:160px;font-size:15px;line-height:20px;}
