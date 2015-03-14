@@ -269,14 +269,14 @@ var DB = (function () {
 					};
 				});
 
-				console.log(u);
-
 				r.deferred.resolve();
 			};
 
 			request.onupgradeneeded = DBConfig.onupgradeneeded || function (event) {
 				var db = event.target.result,
 					transaction = event.target.transaction;
+
+				console.log('"onupgradeneeded" started');
 
 				$.each(DBConfig.stores, function (storeName, config) {
 					if (config.actionOnUpgrade === 'drop') {

@@ -1,28 +1,33 @@
 var Navigation = (function () {
 	var r = {
+		policePresence: {
+			.1: 'Casual',
+			.3: 'Aware',
+			.5: 'On lookout',
+			.7: 'Ambush'
+		},
+		policePresenceKeys: [.1,.3,.5,.7],
 		drawMap: function () {
-			DB.sectors.all(function (sectors) {
-				var map = $('#map'),
-					player = Player.getPlayer();
+			var map = $('#map'),
+				player = Player.getPlayer();
 
-				$.each(sectors, function (i, sector) {
-					var sectorElm = $('<div id="' + sector.id + '"></div>');
+			$.each(Player.getPlayer().sectors, function (i, sector) {
+				var sectorElm = $('<div id="' + sector.id + '"></div>');
 
-					sectorElm.css({
-						top: sector.y,
-						left: sector.x
-					});
-
-					sectorElm.data(sector);
-
-					map.append(sectorElm);
+				sectorElm.css({
+					top: sector.y,
+					left: sector.x
 				});
 
-				$('#map div').removeClass('selected');
-				$('#' + player.currentSector.id).addClass('selected');
+				sectorElm.data(sector);
 
-				Street.draw();
+				map.append(sectorElm);
 			});
+
+			$('#map div').removeClass('selected');
+			$('#' + player.currentSector.id).addClass('selected');
+
+			Street.draw();
 		},
 		initSelect: function () {
 			var navigation = $('#navigation'),
@@ -52,32 +57,41 @@ var Navigation = (function () {
 				}
 			});
 		},
+		generateRandomPromises: function () {
+			var result = {};
+
+			result.policePresence = Utils.randomChoice();
+
+			return result;
+		},
 		getPromises: function (player, callback) {
 			var promises = {};
 
-			console.log($('#map .selected'));
+			promises.rivalPresence = Math.random();
+			promises.policePresence = Utils.randomChoice(r.policePresenceKeys);
+			promises.priceMultiplier = Math.random() + promises.policePresence + promises.rivalPresence; // Need to include a random event here (higher yields, D.E.A. operations...)
 
-			promises.priceMultiplier = 1;
-
-			callback(promises);
+			return promises;
 		},
 		initActions: function () {
 			var navigation = $('#navigation');
 
 			navigation.on('click', '.travel', function () {
-				var blob = $('#actions').data(),
+				var sector = Player.getSector($('#actions').data()),
 					player = Player.getPlayer();
-				$('#selected-sector').text('Currently in ' + blob.name);
-				r.getPromises(player, function (promises) {
-					Drugs.generateDrugState(promises, function (pricelist) {
-						navigation.find('#info, #actions').remove();
-						blob.street = pricelist;
-						player.currentSector = blob;
-						Player.save();
-						$('#map div').removeClass('selected');
-						$('#' + player.currentSector.id).addClass('selected');
-						Street.draw(player);
-					});
+
+				$('#selected-sector').text('Currently in ' + sector.name);
+
+				Drugs.generateDrugState(sector.promises, function (pricelist) {
+					var sectorElm = $('#map').find('div');
+					navigation.find('#info, #actions').remove();
+					sector.street = pricelist;
+					player.currentSector = sector;
+					Player.save();
+					sectorElm.removeClass('selected');
+					$('#' + player.currentSector.id).addClass('selected');
+					u.applyPromises(player);
+					Street.draw(player);
 				});
 			});
 		},
@@ -109,6 +123,14 @@ var Navigation = (function () {
 			});
 		}
 	}, u = {
+		applyPromises: function (player) {
+			var i = 0,
+				j = player.sectors.length;
+
+			for (; i < j; i+= 1) {
+				player.sectors[i].promises = r.getPromises(player)
+			}
+		},
 		updateDatapad: function () {
 			var player = Player.getPlayer();
 

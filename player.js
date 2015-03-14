@@ -24,7 +24,8 @@ var Player = (function () {
 						extraCapacity: [],
 						armor: {},
 						weapon: {},
-						currentSector: Utils.randomChoice(sectors)
+						currentSector: Utils.randomChoice(sectors),
+						sectors: sectors
 					};
 					r.player.currentSector.street = pricelist;
 					u.save();
@@ -56,6 +57,21 @@ var Player = (function () {
 					callback(r.player);
 				}
 			});
+		},
+		getSector: function (data) {
+			var result = null;
+
+			if (!r.player) {
+				return result;
+			}
+
+			$.each(r.player.sectors, function (i, sector) {
+				if (sector.name === data.name) {
+					result = sector;
+				}
+			});
+
+			return result;
 		},
 		sellDrugs: function (drug, amount, callback) {
 			$.each(r.player.currentSector.street, function (i, streetDrug) {

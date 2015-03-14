@@ -62,3 +62,5 @@ body {font-family:'Open Sans', sans-serif;color:#fff;background:#000 url(/city.p
 #street .transaction form fieldset .result.buy:before {content:"-"}
 #street .transaction .error {color:#e74c3c;padding:0 10px;margin:10px;width:160px;font-size:15px;line-height:20px;}
 #street .transaction .success {color:#27ae60;padding:0 10px;margin:10px;width:160px;font-size:15px;line-height:20px;}
+
+.lightbox {position:absolute;top:0;left:0;background:#000;opacity:.8;z-index:1000;cursor:zoom-out;}
